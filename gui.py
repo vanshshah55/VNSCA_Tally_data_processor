@@ -70,6 +70,10 @@ class AppGUI:
         process_btn = ttk.Button(action_frame, text="Process LEDGER HEAD", command=self._show_process_dialog)
         process_btn.pack(side=tk.LEFT, padx=5)
         
+        # Help button
+        help_btn = ttk.Button(action_frame, text="Help", command=self._show_help_dialog)
+        help_btn.pack(side=tk.LEFT, padx=5)
+        
         # Save button
         save_btn = ttk.Button(action_frame, text="Save Output", command=self._save_output)
         save_btn.pack(side=tk.RIGHT, padx=5)
@@ -270,6 +274,9 @@ class AppGUI:
         checkbox_container, scrollable_frame = create_scrollable_frame(checkbox_frame)
         checkbox_container.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
         
+        # Store reference to scrollable_frame for later use
+        self.column_scrollable_frame = scrollable_frame
+        
         # Create a style for the checkbuttons
         style = ttk.Style()
         style.configure("Bold.TCheckbutton", font=("Arial", 10, "bold"))
@@ -359,6 +366,12 @@ class AppGUI:
             
             # Update select all checkbox based on visible checkboxes
             update_select_all_state()
+            
+            # Reset scroll position to top to show the search results
+            self.root.after(50, lambda: scrollable_frame.reset_scroll())
+            
+            # Force update to ensure UI reflects changes immediately
+            scrollable_frame.update_idletasks()
         
         # Add enhanced search bar at the top
         create_search_bar(search_frame, filter_columns, "Search columns...")
@@ -437,6 +450,185 @@ class AppGUI:
         self.preview_table = create_data_table(self.preview_container, preview_data)
         self.preview_table.pack(fill=tk.BOTH, expand=True)
     
+    def _show_help_dialog(self):
+        """Show help dialog with user instructions and troubleshooting information."""
+        # Create dialog window
+        help_dialog = tk.Toplevel(self.root)
+        help_dialog.title("Excel Processor Help")
+        help_dialog.geometry("700x600")
+        help_dialog.minsize(600, 500)
+        help_dialog.transient(self.root)
+        help_dialog.grab_set()
+        
+        # Create notebook for tabbed help sections
+        notebook = ttk.Notebook(help_dialog)
+        notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Create tabs
+        overview_tab = ttk.Frame(notebook, padding=15)
+        workflow_tab = ttk.Frame(notebook, padding=15)
+        columns_tab = ttk.Frame(notebook, padding=15)
+        errors_tab = ttk.Frame(notebook, padding=15)
+        
+        notebook.add(overview_tab, text="Overview")
+        notebook.add(workflow_tab, text="Workflow Steps")
+        notebook.add(columns_tab, text="Column Information")
+        notebook.add(errors_tab, text="Troubleshooting")
+        
+        # Overview Tab Content
+        ttk.Label(overview_tab, text="Tally Data Processor", font=("Arial", 14, "bold")).pack(anchor=tk.W, pady=(0, 10))
+        
+        overview_text = (
+            "This application helps you process Excel files containing financial data. "
+            "It automatically detects header rows, allows you to add specific columns, "
+            "and can populate the LEDGER HEAD column based on numeric values in other columns.\n\n"
+            "Key Features:\n"
+            "• Automatic detection of PR sheets and header rows\n"
+            "• Adding custom columns (LEDGER HEAD, TAXABLE VALUE, etc.)\n"
+            "• Processing LEDGER HEAD based on numeric values\n"
+            "• Preview of data before saving\n"
+            "• Saving processed data to a new Excel file"
+        )
+        
+        overview_label = ttk.Label(
+            overview_tab, 
+            text=overview_text, 
+            wraplength=650, 
+            justify=tk.LEFT
+        )
+        overview_label.pack(fill=tk.BOTH, expand=True)
+        
+        # Workflow Tab Content
+        ttk.Label(workflow_tab, text="Step-by-Step Workflow", font=("Arial", 14, "bold")).pack(anchor=tk.W, pady=(0, 10))
+        
+        workflow_text = (
+            "1. Upload File\n"
+            "   • Click 'Upload File' and select an Excel file (.xlsx or .xls)\n"
+            "   • The application will automatically detect sheets with 'PR' in the name\n"
+            "   • Header and footer rows will be identified automatically\n\n"
+            
+            "2. Add Columns\n"
+            "   • Click 'Add Columns' to open the column selection dialog\n"
+            "   • Select which columns to add (LEDGER HEAD, TAXABLE VALUE, etc.)\n"
+            "   • Click 'Add' to add the selected columns to your data\n\n"
+            
+            "3. Process LEDGER HEAD\n"
+            "   • Click 'Process LEDGER HEAD' to open the processing dialog\n"
+            "   • Select which columns to analyze for numeric values\n"
+            "   • Use the search bar to filter columns if needed\n"
+            "   • Click 'Process' to populate the LEDGER HEAD column\n\n"
+            
+            "4. Save Output\n"
+            "   • Click 'Save Output' to save the processed data\n"
+            "   • Choose a location and filename for the output file\n"
+            "   • The processed data will be saved with the proper column structure"
+        )
+        
+        # Create scrollable frame for workflow text
+        workflow_container, workflow_frame = create_scrollable_frame(workflow_tab)
+        workflow_container.pack(fill=tk.BOTH, expand=True)
+        
+        workflow_label = ttk.Label(
+            workflow_frame, 
+            text=workflow_text, 
+            wraplength=650, 
+            justify=tk.LEFT
+        )
+        workflow_label.pack(fill=tk.BOTH, expand=True, anchor=tk.W)
+        
+        # Columns Tab Content
+        ttk.Label(columns_tab, text="Column Information", font=("Arial", 14, "bold")).pack(anchor=tk.W, pady=(0, 10))
+        
+        columns_text = (
+            "Required Columns:\n"
+            "The application works with any Excel sheet structure, but it's designed to work best "
+            "with financial data that includes these common columns:\n\n"
+            
+            "• Date - Transaction dates\n"
+            "• Particular/Particulars - Transaction descriptions\n"
+            "• Voucher/Voucher No - Reference numbers\n"
+            "• Debit/Credit - Transaction amounts\n"
+            "• Amount - Transaction values\n\n"
+            
+            "Added Columns:\n"
+            "The following columns can be added through the 'Add Columns' feature:\n\n"
+            
+            "• LEDGER HEAD - Will be populated based on which columns contain numeric values\n"
+            "• TAXABLE VALUE - For tax-related calculations\n"
+            "• CGST - Central Goods and Services Tax\n"
+            "• SGST - State Goods and Services Tax\n"
+            "• IGST - Integrated Goods and Services Tax\n\n"
+            
+            "LEDGER HEAD Processing:\n"
+            "When processing the LEDGER HEAD column, the application will:\n"
+            "1. Analyze each row in the selected columns\n"
+            "2. Identify cells with numeric values (excluding 0 and empty cells)\n"
+            "3. Populate the LEDGER HEAD column with the names of columns containing numeric values\n"
+            "4. If multiple columns have numeric values, they will be concatenated with '+'"
+        )
+        
+        # Create scrollable frame for columns text
+        columns_container, columns_frame = create_scrollable_frame(columns_tab)
+        columns_container.pack(fill=tk.BOTH, expand=True)
+        
+        columns_label = ttk.Label(
+            columns_frame, 
+            text=columns_text, 
+            wraplength=650, 
+            justify=tk.LEFT
+        )
+        columns_label.pack(fill=tk.BOTH, expand=True, anchor=tk.W)
+        
+        # Errors Tab Content
+        ttk.Label(errors_tab, text="Troubleshooting", font=("Arial", 14, "bold")).pack(anchor=tk.W, pady=(0, 10))
+        
+        errors_text = (
+            "Common Issues and Solutions:\n\n"
+            
+            "1. File Loading Issues\n"
+            "   • Ensure the file is a valid Excel file (.xlsx or .xls)\n"
+            "   • Check if the file is open in another application\n"
+            "   • Verify the file is not corrupted\n\n"
+            
+            "2. Header Detection Problems\n"
+            "   • If headers are not correctly detected, check if your Excel sheet has clear column headers\n"
+            "   • Headers are detected based on common column names like 'Date', 'Particular', 'Voucher'\n"
+            "   • The application looks for rows with multiple text cells that match common header patterns\n\n"
+            
+            "3. LEDGER HEAD Processing Issues\n"
+            "   • Ensure the 'LEDGER HEAD' column has been added before processing\n"
+            "   • Verify that the columns you selected for processing contain numeric values\n"
+            "   • Check that the numeric values are properly formatted in Excel\n\n"
+            
+            "4. Search Functionality\n"
+            "   • If search results don't appear, try scrolling up to see the results\n"
+            "   • Clear the search and try again with different terms\n"
+            "   • Make sure you're using simple search terms that match part of the column names\n\n"
+            
+            "5. Saving Output\n"
+            "   • Ensure you have write permissions for the selected output location\n"
+            "   • If the file is in use by another application, close it before saving\n"
+            "   • Check that there's enough disk space available\n\n"
+            
+            "If you encounter persistent issues, try restarting the application or checking your Excel file format."
+        )
+        
+        # Create scrollable frame for errors text
+        errors_container, errors_frame = create_scrollable_frame(errors_tab)
+        errors_container.pack(fill=tk.BOTH, expand=True)
+        
+        errors_label = ttk.Label(
+            errors_frame, 
+            text=errors_text, 
+            wraplength=650, 
+            justify=tk.LEFT
+        )
+        errors_label.pack(fill=tk.BOTH, expand=True, anchor=tk.W)
+        
+        # Close button
+        close_btn = ttk.Button(help_dialog, text="Close", command=help_dialog.destroy)
+        close_btn.pack(pady=10)
+        
     def _save_output(self):
         """Handle save output button click."""
         if self.excel_processor.processed_data is None:

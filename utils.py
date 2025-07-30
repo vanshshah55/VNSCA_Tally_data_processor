@@ -18,7 +18,7 @@ def create_scrollable_frame(parent):
         parent: Parent widget
         
     Returns:
-        tuple: (container_frame, scrollable_frame)
+        tuple: (container_frame, scrollable_frame, canvas)
     """
     # Create a container frame with scrollbars
     container = ttk.Frame(parent)
@@ -60,6 +60,13 @@ def create_scrollable_frame(parent):
     # Configure grid weights
     container.grid_rowconfigure(0, weight=1)
     container.grid_columnconfigure(0, weight=1)
+    
+    # Method to reset scroll position to top
+    def reset_scroll():
+        canvas.yview_moveto(0.0)
+    
+    # Attach the method to the scrollable_frame
+    scrollable_frame.reset_scroll = reset_scroll
     
     return container, scrollable_frame
 
