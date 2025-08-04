@@ -1,0 +1,65 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Executable
+I_Processor.exe
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# Keep VBA script and resources
+!resources/

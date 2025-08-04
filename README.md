@@ -1,67 +1,65 @@
-# Excel Processing Application
+# Tally Ledger Head Processor
 
-A Python desktop application for processing Excel files with a focus on PR sheets.
+## Overview
+
+Tally Ledger Head Processor is a specialized application designed to process Excel files containing financial data. It automatically detects header rows, allows you to add specific columns, and can populate the LEDGER HEAD column based on numeric values in other columns.
 
 ## Features
 
-- Upload and process Excel files (.xlsx or .xls)
-- Automatically detect and select sheets with "PR" in their name
-- Intelligently exclude header and footer rows
-- Add custom columns (LEDGER HEAD, TAXABLE VALUE, CGST, SGST, IGST)
-- Process LEDGER HEAD column based on numeric values in selected columns
-- Preview data before saving
-- Save processed data to a new Excel file
-
-## Requirements
-
-- Python 3.7 or higher
-- Required packages:
-  - pandas
-  - numpy
-  - openpyxl (for Excel file handling)
-  - tkinter (included with standard Python installation)
+- Automatic detection of PR sheets and header rows
+- Adding custom columns (LEDGER HEAD, TAXABLE VALUE, CGST, SGST, IGST)
+- Processing LEDGER HEAD based on numeric values
+- Preview of data before saving
+- Saving processed data to a new Excel file
 
 ## Installation
 
-1. Clone or download this repository
-2. Install required packages:
-
-```bash
-pip install pandas numpy openpyxl
-```
+No installation is required. Simply double-click the `Tally_LH_Processor.exe` file to run the application.
 
 ## Usage
 
-1. Run the application:
+1. **Upload File**
+   - Click 'Upload File' and select an Excel file (.xlsx or .xls)
+   - The application will automatically detect sheets with 'PR' in the name
+   - Header and footer rows will be identified automatically
 
-```bash
-python main.py
-```
+2. **Add Columns**
+   - Click 'Add Columns' to open the column selection dialog
+   - Select which columns to add (LEDGER HEAD, TAXABLE VALUE, etc.)
+   - Click 'Add' to add the selected columns to your data
 
-2. Click "Upload File" to select an Excel file
-3. Use "Add Columns" to add required columns to the data
-4. Use "Process LEDGER HEAD" to analyze selected columns and populate the LEDGER HEAD column
-5. Preview the data in the table
-6. Click "Save Output" to save the processed data to a new Excel file
+3. **Process LEDGER HEAD**
+   - Click 'Process LEDGER HEAD' to open the processing dialog
+   - Select which columns to analyze for numeric values
+   - Use the search bar to filter columns if needed
+   - Click 'Process' to populate the LEDGER HEAD column
 
-## Project Structure
+4. **Save Output**
+   - Click 'Save Output' to save the processed data
+   - Choose a location and filename for the output file
+   - The processed data will be saved with the proper column structure
 
-- `main.py`: Entry point for the application
-- `gui.py`: GUI implementation using Tkinter
-- `data_processor.py`: Excel file processing and data manipulation
-- `utils.py`: Utility functions for the application
-- `config.py`: Configuration settings and constants
+## Help
 
-## Workflow Example
+Click the 'Help' button in the application for detailed information about:
+- Step-by-step workflow
+- Column information
+- Troubleshooting common issues
 
-1. Upload an Excel file with a PR sheet
-2. Add the 'LEDGER HEAD' column
-3. Process the LEDGER HEAD column by selecting relevant columns to analyze
-4. Save the processed file with the added and populated columns
+## System Requirements
 
-## Extensibility
+- Windows 10 or Windows 11
+- No additional software installation required
 
-The application is designed to be easily extended:
-- Add new column types in `config.py`
-- Implement new processing rules in `data_processor.py`
-- Add new UI features in `gui.py`
+## Version Information
+
+- Version: 1.0.0
+- Release Date: 2023
+
+## Support
+
+For support or to report issues, please contact your system administrator.
+
+---
+
+© 2023 VNSCA. All rights reserved.
