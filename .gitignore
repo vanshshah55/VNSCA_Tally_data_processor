@@ -25,6 +25,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
+build_log.txt
 
 # Environments
 .env
@@ -34,6 +35,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+venv_build/
 
 # IDE files
 .idea/
@@ -52,7 +54,8 @@ ehthumbs.db
 Desktop.ini
 
 # Executable
-I_Processor.exe
+Tally_LH_Processor_Optimized.exe
+Tally_LH_Processor.exe
 
 # Logs
 *.log

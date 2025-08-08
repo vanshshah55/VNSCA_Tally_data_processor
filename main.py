@@ -10,6 +10,7 @@ import tkinter as tk
 import os
 import sys
 from gui import AppGUI
+from expiration_check import should_disable_functionality, get_expiration_status
 
 def resource_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller."""

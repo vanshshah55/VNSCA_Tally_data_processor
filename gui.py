@@ -14,6 +14,7 @@ import pandas as pd
 from data_processor import ExcelProcessor
 from utils import create_scrollable_frame, create_data_table, create_search_bar
 from config import ADDABLE_COLUMNS, EXCEL_FILE_TYPES, PREVIEW_ROWS
+from expiration_check import get_expiration_message, get_days_remaining, should_disable_functionality, get_expiration_status
 
 class AppGUI:
     """
@@ -32,16 +33,57 @@ class AppGUI:
         """
         self.root = root
         self.excel_processor = ExcelProcessor()
+        self.is_expired = should_disable_functionality()
         
         # Create main frame
         self.main_frame = ttk.Frame(root, padding="10")
         self.main_frame.pack(fill=tk.BOTH, expand=True)
         
         # Create sections
+        self._create_expiration_warning()
         self._create_file_section()
         self._create_action_section()
         self._create_preview_section()
         self._create_status_bar()
+    
+    def _create_expiration_warning(self):
+        """Create the expiration warning section."""
+        days_remaining = get_days_remaining()
+        
+        # Show warning if less than 30 days remaining or if expired
+        if days_remaining <= 30 or self.is_expired:
+            warning_frame = ttk.Frame(self.main_frame)
+            warning_frame.pack(fill=tk.X, pady=(0, 5))
+            
+            # Choose color and message based on expiration status
+            if self.is_expired:
+                bg_color = "#ff4444"  # Bright red for expired
+                text_color = "white"
+                message = "⚠️ APPLICATION EXPIRED ⚠️\n" + get_expiration_message() + "\n\nAll functionality has been disabled. Please contact Vansh Shah for an updated version."
+                font_size = 12
+            elif days_remaining <= 7:
+                bg_color = "#ffe6cc"  # Light orange for very urgent
+                text_color = "#cc6600"
+                message = get_expiration_message()
+                font_size = 9
+            else:
+                bg_color = "#fff2cc"  # Light yellow for warning
+                text_color = "#b8860b"
+                message = get_expiration_message()
+                font_size = 9
+            
+            warning_label = tk.Label(
+                warning_frame,
+                text=message,
+                bg=bg_color,
+                fg=text_color,
+                font=("Arial", font_size, "bold"),
+                padx=15,
+                pady=10 if self.is_expired else 5,
+                wraplength=900,
+                justify=tk.CENTER if self.is_expired else tk.LEFT
+            )
+            warning_label.pack(fill=tk.X)
     
     def _create_file_section(self):
         """Create the file upload section."""
@@ -56,6 +98,10 @@ class AppGUI:
         # Upload button
         upload_btn = ttk.Button(file_frame, text="Upload File", command=self._upload_file)
         upload_btn.pack(side=tk.RIGHT, padx=5)
+        
+        # Disable if expired
+        if self.is_expired:
+            upload_btn.configure(state="disabled")
     
     def _create_action_section(self):
         """Create the action buttons section."""
@@ -77,6 +123,13 @@ class AppGUI:
         # Save button
         save_btn = ttk.Button(action_frame, text="Save Output", command=self._save_output)
         save_btn.pack(side=tk.RIGHT, padx=5)
+        
+        # Disable all buttons if expired
+        if self.is_expired:
+            add_columns_btn.configure(state="disabled")
+            process_btn.configure(state="disabled")
+            save_btn.configure(state="disabled")
+            # Keep help button enabled so users can still access help
     
     def _create_preview_section(self):
         """Create the data preview section with improved scrolling."""
